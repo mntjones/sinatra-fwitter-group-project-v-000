@@ -9,3 +9,4 @@ ActiveRecord::Base.establish_connection(
 )
 
 require_all 'app'
+require_relative '../app/models/concerns/slugifiable.rb'
