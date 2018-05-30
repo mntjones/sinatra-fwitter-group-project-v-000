@@ -41,8 +41,12 @@ class ApplicationController < Sinatra::Base
     end
   end
 
+  get '/logged_in' do
+    return logged_in?
+  end
+
   post '/login' do
-    @user = User.find_by(username: params["username"])
+    @user = User.find_by(username: params[:username])
 
     if @user && @user.authenticate(params[:password])
       session[:user_id] = @user.id
@@ -55,7 +59,7 @@ class ApplicationController < Sinatra::Base
   get '/logout' do
     if logged_in?
       session.destroy
-      redirect '/login'
+      redirect to '/login'
     else
       redirect '/'
     end
@@ -86,8 +90,8 @@ class ApplicationController < Sinatra::Base
   end
 
   post '/tweets' do
-    if !params["tweet"]["content"].empty?
-      tweet = Tweet.create(content: params["tweet"]["content"])
+    if !params[:content].empty?
+      tweet = Tweet.create(content: params[:content])
       tweet.user = current_user
       tweet.save
       redirect '/tweets'
@@ -114,10 +118,15 @@ class ApplicationController < Sinatra::Base
     end
   end
 
-  patch '/tweets/:id/edit' do
-    @tweet = Tweet.find_by_id(params[:id])
-    @tweet.update(content: params["tweet"]["content"])
-    redirect '/tweets/'
+  patch '/tweets/:id' do
+    @tweet = Tweet.find_by(id: params[:id])
+    if params
+      @tweet.update(content: params)
+      @tweet.save
+      redirect '/tweets/'
+    else
+      redirect '/tweets/#{@tweet.id}/edit'
+    end
   end
 
   delete '/tweets/:id/delete' do
@@ -130,7 +139,7 @@ class ApplicationController < Sinatra::Base
     end
   end
 
-  
+
   # HELPERS ---------
   helpers do
 		def logged_in?
@@ -141,4 +150,5 @@ class ApplicationController < Sinatra::Base
 			User.find(session[:user_id])
 		end
 	end
+
 end
