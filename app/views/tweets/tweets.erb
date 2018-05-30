@@ -1,8 +1,7 @@
-<h1>Welcome to your List of Tweets!</h1>
+<h1>Welcome, <%= @user.username %></h1>
 
-    <% if is_logged_in?(session) %>
-      <% Tweet.all.each do |tweet| %>
-        <p> <%= tweet.content %> </p>
-        <% end %>
-      <a href="/logout">Log Out</a>
-    <% end %>
+<% Tweet.all.each do |tweet| %>
+  <p> <%= tweet.content %> </p><br>
+<% end %>
+
+<a href="/logout">Log Out</a>
